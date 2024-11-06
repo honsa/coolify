@@ -2,22 +2,22 @@
 
 namespace App\Actions\License;
 
-use App\Models\InstanceSettings;
 use Illuminate\Support\Facades\Http;
 use Lorisleiva\Actions\Concerns\AsAction;
-
 
 class CheckResaleLicense
 {
     use AsAction;
+
     public function handle()
     {
         try {
-            $settings = InstanceSettings::get();
+            $settings = instanceSettings();
             if (isDev()) {
                 $settings->update([
                     'is_resale_license_active' => true,
                 ]);
+
                 return;
             }
             // if (!$settings->resale_license) {
@@ -38,6 +38,7 @@ class CheckResaleLicense
                 $settings->update([
                     'is_resale_license_active' => true,
                 ]);
+
                 return;
             }
             $data = Http::withHeaders([
@@ -51,6 +52,7 @@ class CheckResaleLicense
                 $settings->update([
                     'is_resale_license_active' => true,
                 ]);
+
                 return;
             }
             if (data_get($data, 'license_key.status') === 'active') {
